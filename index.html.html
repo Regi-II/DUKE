@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DUKE Portfolio</title>
+
+<style>
+
+/* ===================================================== */
+/* 🔴 COLORS */
+/* ===================================================== */
+:root{
+    --accent:#8b5cf6;
+    --text:#ffffff;
+    --muted:#b3b3b3;
+}
+
+/* ===================================================== */
+/* 🔴 BACKGROUND VIDEO */
+/* ===================================================== */
+#bgVideo{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    z-index:-3;
+}
+
+/* 🔴 VIDEO DARKNESS CONTROL (0 = clear, 1 = dark) */
+#videoOverlay{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:black;
+    opacity:0.55;
+    z-index:-2;
+}
+
+/* 🔴 VISUAL GUIDE: VIDEO AREA (YOU CAN REMOVE LATER) */
+#videoGuide{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    border:2px dashed rgba(255,255,255,0.2);
+    z-index:-1;
+    pointer-events:none;
+}
+
+/* ===================================================== */
+/* BODY */
+/* ===================================================== */
+body{
+    margin:0;
+    font-family:Arial;
+    color:var(--text);
+    background:black;
+}
+
+/* NAV */
+nav{
+    position:sticky;
+    top:0;
+    display:flex;
+    justify-content:center;
+    gap:30px;
+    padding:12px;
+    background:#000000cc;
+    z-index:10;
+}
+
+nav a{
+    color:white;
+    text-decoration:none;
+    font-weight:bold;
+}
+
+/* SECTIONS */
+section{
+    max-width:1200px;
+    margin:auto;
+    padding:100px 20px;
+}
+
+/* TITLES */
+.sectionTitle{
+    font-size:40px;
+    margin-bottom:20px;
+    color:var(--accent);
+}
+
+/* ===================================================== */
+/* HERO */
+/* ===================================================== */
+.hero{
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+/* HERO SHIFT UP (TITLE FEEL) */
+.heroCenter{
+    display:flex;
+    gap:80px;
+    align-items:flex-start;
+    margin-top:-60px;
+}
+
+/* LEFT NAME */
+.heroName{
+    text-align:center;
+}
+
+.heroName h1{
+    font-size:140px;
+    margin:0;
+    color:var(--accent);
+}
+
+.heroName h2{
+    margin:0;
+    font-size:22px;
+}
+
+/* ===================================================== */
+/* FLIP BOX */
+/* ===================================================== */
+.flipBox{
+    width:360px;
+    height:280px;
+    perspective:1000px;
+    cursor:pointer;
+}
+
+.flipInner{
+    width:100%;
+    height:100%;
+    position:relative;
+    transition:0.8s;
+    transform-style:preserve-3d;
+}
+
+.flipInner.flipped{
+    transform:rotateY(180deg);
+}
+
+.flipFront, .flipBack{
+    position:absolute;
+    width:100%;
+    height:100%;
+    backface-visibility:hidden;
+    background:#1b1b24cc;
+    border-radius:12px;
+    padding:20px;
+    display:flex;
+    flex-direction:column;
+}
+
+/* FRONT CONTENT SPACING */
+.roleList{
+    display:flex;
+    flex-direction:column;
+    gap:12px; /* 🔴 SPACING BETWEEN SKILLS */
+    margin-top:20px;
+}
+
+/* ABOUT ME PUSHED DOWN */
+.aboutHint{
+    margin-top:auto;
+    color:var(--muted);
+    font-size:12px;
+    text-align:center;
+}
+
+/* BACK SIDE */
+.flipBack{
+    transform:rotateY(180deg);
+    justify-content:center;
+}
+
+/* ===================================================== */
+/* SOCIAL ICONS */
+/* ===================================================== */
+.socialRow{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    margin-top:15px;
+}
+
+.socialCircle{
+    width:35px;
+    height:35px;
+    border-radius:50%;
+    background:var(--accent);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    color:white;
+    font-size:14px;
+    cursor:pointer;
+}
+
+/* DISABLED ICONS */
+.disabled{
+    background:#333;
+    opacity:0.5;
+    cursor:not-allowed;
+}
+
+/* ===================================================== */
+/* GALLERY */
+/* ===================================================== */
+.galleryPreview{
+    height:500px;
+    background:#1b1b24;
+    margin-bottom:15px;
+}
+
+.thumbs{
+    display:grid;
+    grid-template-columns:repeat(6,1fr);
+    gap:10px;
+}
+
+.thumbs img{
+    width:100%;
+    aspect-ratio:1/1;
+    cursor:pointer;
+}
+
+/* ===================================================== */
+/* 3D MODELS */
+/* ===================================================== */
+.modelLayout{
+    display:flex;
+    gap:20px;
+}
+
+.modelPreview{
+    flex:1;
+    height:500px;
+    background:#1b1b24;
+}
+
+.modelGrid{
+    width:300px;
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+}
+
+.modelGrid img{
+    width:100%;
+    aspect-ratio:1/1;
+    cursor:pointer;
+}
+
+/* ===================================================== */
+/* CONTACT */
+/* ===================================================== */
+.contactBox{
+    background:#1b1b24;
+    padding:30px;
+    border-radius:12px;
+    text-align:center;
+}
+</style>
+</head>
+
+<body>
+
+<!-- BACKGROUND VIDEO -->
+<video autoplay muted loop id="bgVideo">
+    <!-- 🔴 CHANGE VIDEO FILE HERE -->
+    <source src="videos/background.mp4">
+</video>
+
+<div id="videoOverlay"></div>
+
+<!-- 🔴 VISUAL GUIDE (REMOVE LATER IF YOU WANT CLEAN LOOK) -->
+<div id="videoGuide"></div>
+
+<!-- NAV -->
+<nav>
+    <a href="#top">START</a>
+    <a href="#gallery">GALLERY</a>
+    <a href="#models">3D MODELS</a>
+    <a href="#contact">CONTACT</a>
+</nav>
+
+<!-- HERO -->
+<section id="top" class="hero">
+
+<div class="heroCenter">
+
+    <!-- NAME -->
+    <div class="heroName">
+
+        <h1>DUKE</h1>
+
+        <!-- 🔴 CENTERED UNDER DUKE -->
+        <h2>Mathew Ojstersek</h2>
+
+        <!-- SOCIAL ICONS -->
+        <div class="socialRow">
+
+            <!-- 🔴 INSTAGRAM LINK -->
+            <a class="socialCircle" href="#">IG</a>
+
+            <!-- 🔴 TWITTER (DISABLED) -->
+            <a class="socialCircle disabled" href="#">X</a>
+
+            <!-- 🔴 YOUTUBE (DISABLED) -->
+            <a class="socialCircle disabled" href="#">YT</a>
+
+        </div>
+
+    </div>
+
+    <!-- ROLE BOX -->
+    <div class="flipBox" onclick="flipBox()">
+
+        <div class="flipInner" id="flipInner">
+
+            <!-- FRONT -->
+            <div class="flipFront">
+
+                <div class="roleList">
+
+                    <!-- 🔴 SPACED SKILLS -->
+                    <div>3D Generalist</div>
+                    <div>Animator</div>
+                    <div>Hard Surface Modeling</div>
+
+                </div>
+
+                <!-- ABOUT HINT -->
+                <div class="aboutHint">
+                    ABOUT ME ↓ (CLICK)
+                </div>
+
+            </div>
+
+            <!-- BACK -->
+            <div class="flipBack">
+
+                <!-- 🔴 ABOUT ME TEXT -->
+                <p>
+                    WRITE YOUR ABOUT ME TEXT HERE.
+                    THIS IS YOUR PERSONAL DESCRIPTION.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</section>
+
+<!-- GALLERY -->
+<section id="gallery">
+
+<h2 class="sectionTitle">Gallery</h2>
+
+<div class="galleryPreview"></div>
+
+<div class="thumbs">
+    <img src="images/img1.jpg">
+    <img src="images/img2.jpg">
+    <img src="images/img3.jpg">
+    <img src="images/img4.jpg">
+    <img src="images/img5.jpg">
+    <img src="images/img6.jpg">
+</div>
+
+</section>
+
+<!-- 3D MODELS -->
+<section id="models">
+
+<h2 class="sectionTitle">3D Models</h2>
+
+<div class="modelLayout">
+
+    <div class="modelPreview"></div>
+
+    <div class="modelGrid">
+        <img src="images/m1.jpg">
+        <img src="images/m2.jpg">
+        <img src="images/m3.jpg">
+        <img src="images/m4.jpg">
+        <img src="images/m5.jpg">
+        <img src="images/m6.jpg">
+        <img src="images/m7.jpg">
+        <img src="images/m8.jpg">
+        <img src="images/m9.jpg">
+    </div>
+
+</div>
+
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+
+<div class="contactBox">
+
+    <!-- 🔴 EMAIL HERE -->
+    <p>Contact me directly:</p>
+
+    <p><b>YOURNAME@EMAIL.COM</b></p>
+
+</div>
+
+</section>
+
+<script>
+
+function flipBox(){
+    document.getElementById("flipInner").classList.toggle("flipped");
+}
+
+</script>
+
+</body>
+</html>
